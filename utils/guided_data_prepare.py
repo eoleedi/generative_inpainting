@@ -68,9 +68,9 @@ def generate_image_with_mask(rawImage: Mat) -> (Tuple[Mat, Mat, Mat]):
 
 if __name__ == '__main__':
     # Image path & name
-    rawImagePathName = "./ourimage/test_raw.jpg"
+    rawImagePathName = "../data/ourimage/test_raw.jpg"
     imageBaseName = "test"
-    saveFolderPath = "./ourimage/result/"
+    saveFolderPath = "../data/ourimage/result/"
 
     # Read images
     rawImage = cv2.imread(rawImagePathName)
