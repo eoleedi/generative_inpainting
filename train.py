@@ -28,8 +28,9 @@ if __name__ == "__main__":
     # training data
     FLAGS = ng.Config('inpaint.yml')
     img_shapes = FLAGS.img_shapes
-    with open(FLAGS.data_flist[FLAGS.dataset][0]) as f:
+    with open(FLAGS.data_flist[FLAGS.dataset][0], encoding="utf-8") as f:
         fnames = f.read().splitlines()
+
     if FLAGS.guided:
         fnames = [(fname, fname[:-4] + '_edge.jpg') for fname in fnames]
         img_shapes = [img_shapes, img_shapes]
@@ -42,7 +43,7 @@ if __name__ == "__main__":
     g_vars, d_vars, losses = model.build_graph_with_losses(FLAGS, images)
     # validation images
     if FLAGS.val:
-        with open(FLAGS.data_flist[FLAGS.dataset][1]) as f:
+        with open(FLAGS.data_flist[FLAGS.dataset][1], encoding="utf-8") as f:
             val_fnames = f.read().splitlines()
         if FLAGS.guided:
             val_fnames = [
@@ -56,10 +57,10 @@ if __name__ == "__main__":
             static_inpainted_images = model.build_static_infer_graph(
                 FLAGS, static_images, name='static_view/%d' % i)
     # training settings
-    lr = tf.get_variable(
+    lr = tf.compat.v1.get_variable(
         'lr', shape=[], trainable=False,
-        initializer=tf.constant_initializer(1e-4))
-    d_optimizer = tf.train.AdamOptimizer(lr, beta1=0.5, beta2=0.999)
+        initializer=tf.compat.v1.constant_initializer(1e-4))
+    d_optimizer = tf.compat.v1.train.AdamOptimizer(lr, beta1=0.5, beta2=0.999)
     g_optimizer = d_optimizer
     # train discriminator with secondary trainer, should initialize before
     # primary trainer.
@@ -94,9 +95,12 @@ if __name__ == "__main__":
     trainer.add_callbacks([
         discriminator_training_callback,
         ng.callbacks.WeightsViewer(),
-        ng.callbacks.ModelRestorer(trainer.context['saver'], dump_prefix=FLAGS.model_restore+'/snap', optimistic=True),
-        ng.callbacks.ModelSaver(FLAGS.train_spe, trainer.context['saver'], FLAGS.log_dir+'/snap'),
-        ng.callbacks.SummaryWriter((FLAGS.val_psteps//1), trainer.context['summary_writer'], tf.summary.merge_all()),
+        ng.callbacks.ModelRestorer(
+            trainer.context['saver'], dump_prefix=FLAGS.model_restore+'/snap', optimistic=True),
+        ng.callbacks.ModelSaver(
+            FLAGS.train_spe, trainer.context['saver'], FLAGS.log_dir+'/snap'),
+        ng.callbacks.SummaryWriter(
+            (FLAGS.val_psteps//1), trainer.context['summary_writer'], tf.compat.v1.summary.merge_all()),
     ])
     # launch training
     trainer.train()
