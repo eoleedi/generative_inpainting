@@ -28,8 +28,6 @@ parser.add_argument(
 
 
 if __name__ == "__main__":
-    ng.get_gpus(1)
-    # os.environ['CUDA_VISIBLE_DEVICES'] =''
     args = parser.parse_args()
 
     sess_config = tf.compat.v1.ConfigProto()
@@ -63,7 +61,7 @@ if __name__ == "__main__":
         image, mask, guidance, out = line.split()
         base = os.path.basename(mask)
 
-        guidance = cv2.imread(image[:-4] + '_edge.jpg')
+        guidance = cv2.imread(guidance)
         image = cv2.imread(image)
         mask = cv2.imread(mask)
         image = cv2.resize(image, (args.image_width, args.image_height))
