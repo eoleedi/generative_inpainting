@@ -28,6 +28,7 @@ parser.add_argument(
 
 
 if __name__ == "__main__":
+    FLAGS = ng.Config('inpaint.yml')
     args = parser.parse_args()
 
     sess_config = tf.compat.v1.ConfigProto()
@@ -35,9 +36,10 @@ if __name__ == "__main__":
     sess = tf.compat.v1.Session(config=sess_config)
 
     model = InpaintCAModel()
+    tf.compat.v1.disable_eager_execution()
     input_image_ph = tf.compat.v1.placeholder(
         tf.float32, shape=(1, args.image_height, args.image_width*3, 3))
-    output = model.build_server_graph(input_image_ph)
+    output = model.build_server_graph(FLAGS, input_image_ph)
     output = (output + 1.) * 127.5
     output = tf.reverse(output, [-1])
     output = tf.saturate_cast(output, tf.uint8)
