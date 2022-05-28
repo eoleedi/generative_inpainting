@@ -7,6 +7,34 @@ import os
 pyexecutePath = os.path.dirname(__file__)
 
 
+def face_detection(image):
+    """Face Detection using YuNet"""
+    model = f"{pyexecutePath}/face_detection_yunet_2022mar.onnx"
+    score_threshold = 0.6
+    nms_threshold = 0.3
+    backend = cv2.dnn.DNN_BACKEND_DEFAULT
+    target = cv2.dnn.DNN_TARGET_CPU
+    yunet = cv2.FaceDetectorYN.create(
+        model=model,
+        config='',
+        input_size=(320, 320),
+        score_threshold=score_threshold,
+        nms_threshold=nms_threshold,
+        top_k=5000,
+        backend_id=backend,
+        target_id=target
+    )
+    yunet.setInputSize((image.shape[1], image.shape[0]))
+    _, faces = yunet.detect(image)  # faces: None, or nx15 np.array
+
+    processed_faces = []
+    for face in faces:
+        x, y, w, h = face[0:4].astype(np.int32)
+        processed_faces.append((x, y, w, h))
+
+    return processed_faces
+
+
 def generate_canny_edge_image(image):
     """
     Convert Image into edge image using canny edge detection
@@ -49,6 +77,8 @@ def generate_image_with_mask(rawImage: Mat) -> (Tuple[Mat, Mat, Mat]):
         minNeighbors=5,
         minSize=(30, 30)
     )
+    # New method for face detection
+    # faces = face_detection(rawImage)
 
     # initialize images
     rawEdgeImage = generate_canny_edge_image(rawImage)
