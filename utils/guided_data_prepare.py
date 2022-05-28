@@ -59,11 +59,11 @@ def generate_image_with_mask(rawImage: Mat) -> (Tuple[Mat, Mat, Mat]):
     # Generate images with multiple faces region
     for (x, y, w, h) in faces:
         # Bottom half image
-        x = x + w // 2
-        w = w // 2
-        image_mask[x:x+w, y:y+h] = 255
-        image_input[x:x+w, y:y+h] = 255
-        image_edge[x:x+w, y:y+h] = rawEdgeImage[x:x+w, y:y+h]
+        y = y + h // 2
+        h = h // 2
+        image_mask[y:y+h, x:x+w] = 255
+        image_input[y:y+h, x:x+w] = 255
+        image_edge[y:y+h, x:x+w] = rawEdgeImage[y:y+h, x:x+w]
 
     return image_input, image_edge, image_mask
 
