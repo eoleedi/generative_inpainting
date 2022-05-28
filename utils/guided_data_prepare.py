@@ -3,6 +3,8 @@ import cv2
 from cv2 import Mat
 import numpy as np
 import math
+import os
+pyexecutePath = os.path.dirname(__file__)
 
 
 def generate_canny_edge_image(image):
@@ -36,7 +38,7 @@ def generate_image_with_mask(rawImage: Mat) -> (Tuple[Mat, Mat, Mat]):
     """
 
     # Import opencv face cascade classifier to find out the bottom half face
-    cascasdepath = "./haarcascade_frontalface_default.xml"
+    cascasdepath = f"{pyexecutePath}/haarcascade_frontalface_default.xml"
     face_cascade = cv2.CascadeClassifier(cascasdepath)
 
     # Calculate the position of face
@@ -67,10 +69,15 @@ def generate_image_with_mask(rawImage: Mat) -> (Tuple[Mat, Mat, Mat]):
 
 
 if __name__ == '__main__':
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--image', default='', type=str,
+                        help='The filename of image to be completed.')
+    args, unknown = parser.parse_known_args()
     # Image path & name
-    rawImagePathName = "../data/ourimage/test_raw.jpg"
-    imageBaseName = "test"
-    saveFolderPath = "../data/ourimage/result/"
+    rawImagePathName = f"{pyexecutePath}/../data/ourimage/original/{args.image}"
+    imageBaseName = "".join(args.image.split('.')[:-1])
+    saveFolderPath = f"{pyexecutePath}/../data/ourimage/prepared/"
 
     # Read images
     rawImage = cv2.imread(rawImagePathName)
