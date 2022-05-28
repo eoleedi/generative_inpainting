@@ -5,16 +5,16 @@ import numpy as np
 import math
 
 
-def generate_canny_edge_image(grayImage):
+def generate_canny_edge_image(image):
     """
     Convert Image into edge image using canny edge detection
-    @param grayImage the gray scale image
+    @param image the input image
     """
-    height, width, channels = grayImage.shape
+    height, width, channels = image.shape
     kernel_size = int(math.sqrt(width * height) / 50)
     kernel_size = kernel_size if kernel_size % 2 else kernel_size - 1
 
-    blur_gray = cv2.GaussianBlur(grayImage, (kernel_size, kernel_size), 0)
+    blur_gray = cv2.GaussianBlur(image, (kernel_size, kernel_size), 0)
     weight = 1/math.log(kernel_size*0.1+1)
     low_threshold = 10 * weight
     high_threshold = low_threshold * 5
@@ -42,7 +42,7 @@ def generate_image_with_mask(rawImage: Mat) -> (Tuple[Mat, Mat, Mat]):
     # Calculate the position of face
     gray = cv2.cvtColor(rawImage, cv2.COLOR_BGR2GRAY)
     faces = face_cascade.detectMultiScale(
-        gray,
+        rawImage,
         scaleFactor=1.2,
         minNeighbors=5,
         minSize=(30, 30)
