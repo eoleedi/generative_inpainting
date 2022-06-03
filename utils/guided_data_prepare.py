@@ -78,7 +78,7 @@ def generate_image_with_mask(rawImage: Mat) -> (Tuple[Mat, Mat, Mat]):
         minSize=(30, 30)
     )
     # New method for face detection
-    # faces = face_detection(rawImage)
+    faces = face_detection(rawImage)
 
     # initialize images
     rawEdgeImage = generate_canny_edge_image(rawImage)
@@ -102,12 +102,14 @@ if __name__ == '__main__':
     import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--image', default='', type=str,
-                        help='The filename of image to be completed.')
+                        help='The path of image to be completed.')
+    parser.add_argument('--output', default='', type=str,
+                        help='The path of folder to be save the result images.')
     args, unknown = parser.parse_known_args()
     # Image path & name
-    rawImagePathName = f"{pyexecutePath}/../data/ourimage/original/{args.image}"
-    imageBaseName = "".join(args.image.split('.')[:-1])
-    saveFolderPath = f"{pyexecutePath}/../data/ourimage/prepared/"
+    rawImagePathName = args.image
+    imageBaseName = "".join(args.image.split('/')[-1].split('.')[:-1])
+    saveFolderPath = args.output
 
     # Read images
     rawImage = cv2.imread(rawImagePathName)
